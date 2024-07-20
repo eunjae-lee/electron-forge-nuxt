@@ -11,6 +11,9 @@ importers:
       electron-squirrel-startup:
         specifier: ^1.0.1
         version: 1.0.1
+      pm2:
+        specifier: ^5.4.2
+        version: 5.4.2
     devDependencies:
       '@electron-forge/cli':
         specifier: ^7.4.0
@@ -57,9 +60,6 @@ importers:
       eslint-plugin-import:
         specifier: ^2.25.0
         version: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@4.5.5))(eslint@8.57.0)
-      pm2:
-        specifier: ^5.4.2
-        version: 5.4.2
       ts-node:
         specifier: ^10.0.0
         version: 10.9.2(@types/node@20.14.11)(typescript@4.5.5)
