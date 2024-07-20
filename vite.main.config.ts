@@ -1,6 +1,8 @@
-import type { ConfigEnv, UserConfig } from 'vite';
+import type { ConfigEnv, UserConfig, Plugin } from 'vite';
 import { defineConfig, mergeConfig } from 'vite';
 import { getBuildConfig, getBuildDefine, external, pluginHotRestart } from './vite.base.config';
+import { promisify } from 'node:util';
+import { exec } from 'node:child_process';
 
 // https://vitejs.dev/config
 export default defineConfig((env) => {
@@ -18,7 +20,7 @@ export default defineConfig((env) => {
         external,
       },
     },
-    plugins: [pluginHotRestart('restart')],
+    plugins: [pluginHotRestart('restart'), buildNuxtApp],
     define,
     resolve: {
       // Load the Node.js entry.
@@ -28,3 +30,12 @@ export default defineConfig((env) => {
 
   return mergeConfig(getBuildConfig(forgeEnv), config);
 });
+
+const buildNuxtApp: Plugin = {
+  name: 'build-nuxt-app',
+  apply: 'build',
+  async buildEnd() {
+    const execPromise = promisify(exec);
+    await execPromise(`pnpm -F nuxt build`);
+  },
+};

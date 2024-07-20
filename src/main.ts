@@ -1,7 +1,6 @@
 import { app, BrowserWindow } from 'electron';
-import path from 'path';
-import pm2 from 'pm2';
-import { name } from 'package.json';
+import path from 'node:path';
+import { nuxtAppPort } from '../const';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -20,32 +19,12 @@ const createWindow = () => {
 
   // @ts-ignore
   if (import.meta.env.MODE === 'development') {
-    mainWindow.loadURL('http://localhost:6120');
+    mainWindow.loadURL(`http://localhost:${nuxtAppPort}`);
   } else {
-    const processName = `${name}-nuxt`;
-    // TODO: restart if already running
-    pm2.connect((_err) => {
-      if (_err) {
-        console.error(_err);
-        process.exit(1);
-      }
-
-      pm2.start(
-        {
-          name: processName,
-          script: './nuxt/.output/server/index.mjs',
-          env: {
-            NITRO_PORT: '6120',
-          },
-        },
-        (err) => {
-          if (err) {
-            pm2.disconnect();
-            process.exit(1);
-          }
-          mainWindow.loadURL('http://localhost:6120');
-        },
-      );
+    const filePath = path.resolve(__dirname, '../../../', './server/index.mjs');
+    process.env.NITRO_PORT = `${nuxtAppPort}`;
+    import(filePath).then(() => {
+      mainWindow.loadURL(`http://localhost:${nuxtAppPort}`);
     });
   }
 
